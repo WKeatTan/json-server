@@ -27,10 +27,12 @@ server.use((req, res) => {
     if (req.body.id) {
       result.data = data.find(({ id }) => id == req.body.id);
     } else {
-      const page = req.body.page ?? 1;
-      const size = req.body.perPage ?? 10;
+      /** Request body */
+      const page = req.body.paginationDto?.page ?? 1;
+      const size = req.body.paginationDto?.perPage ?? 10;
+      
+      /** Handle Pagination */
       const totalCount = data.length;
-
       const start = (page - 1) * size;
       const end = page * size;
       const list = data.slice(start, end);

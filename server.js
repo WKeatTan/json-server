@@ -7,8 +7,9 @@ const db = require("./db.json");
 const PORT = 8000;
 
 server.use(middlewares);
+server.use(jsonServer.bodyParser);
 server.use((req, res) => {
-  if (req.method === "GET") {
+  if (req.url.includes("/list") && req.method === "POST") {
     const tableName = Object.keys(db).find((key) => req.url.includes(key));
     const data = db[tableName];
 
@@ -23,19 +24,24 @@ server.use((req, res) => {
       res.status(500).jsonp(result);
     }
 
-    if (req.query.id) {
-      result.data = data.find(({ id }) => id == req.query.id);
+    if (req.body.id) {
+      result.data = data.find(({ id }) => id == req.body.id);
     } else {
-      const page = req.query.page ?? 1;
-      const size = req.query.perPage ?? 10;
+      const page = req.body.page ?? 1;
+      const size = req.body.perPage ?? 10;
       const totalCount = data.length;
+
+      const start = (page - 1) * size;
+      const end = page * size;
+      const list = data.slice(start, end);
+      const totalPages = Math.round(totalCount / size) || 1;
 
       result.data = {
         page,
         size,
-        totalPages: Math.round(totalCount / size) || 1,
+        totalPages,
         totalCount,
-        list: data,
+        list,
       };
     }
 

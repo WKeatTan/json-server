@@ -4,6 +4,8 @@ const router = jsonServer.router("db.json");
 const middlewares = jsonServer.defaults();
 const db = require("./db.json");
 
+const PORT = 8000;
+
 server.use(middlewares);
 server.use((req, res) => {
   if (req.method === "GET") {
@@ -42,6 +44,6 @@ server.use((req, res) => {
 });
 server.use(router);
 
-server.listen(8000, () => {
+server.listen(PORT, () => {
   console.log("JSON Server is running");
 });
